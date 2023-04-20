@@ -1,56 +1,108 @@
-import React, {useState} from 'react'
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
+  // Hook - `useState`
+  const [newItem, setNewItem] = useState("");
+  const [items, setItems] = useState([]);
 
-  const [list, setList] = useState([]);
-  const [input, setInput] = useState("");
+  const [showEdit, setShowEdit] = useState(-1);
+  const [updatedText, setUpdatedText] = useState("");
 
-  const [editInput, setEditInput] = useState("");
-
-  const addTodo = (todo) => {
-    const newTodo = {
-      id: Math.random() * 10,
-      todo: todo
+  function addItem() {
+    if (!newItem) {
+      alert("Press enter an item.");
+      return;
     }
 
-    setList([...list, newTodo])
+    const item = {
+      id: Math.floor(Math.random() * 1000),
+      value: newItem,
+    };
 
-    setInput("");
+    setItems((oldList) => [...oldList, item]);
+
+    setNewItem("");
   }
 
-  const changeTodo = (id, todo) => {
-    const newList = list.map(e => {
+  function deleteItem(id) {
+    const newArray = items.filter((item) => item.id !== id);
+    setItems(newArray);
+  }
+
+  function editItem(id, newText) {
+
+    const newList = items.map((e) => {
       if (e.id === id) {
-        return {...e, todo: todo};
+        return { ...e, value: newText }
       }
       return e;
-    });
+    })
 
-    setList(newList);
-  }
-
-  const deleteTodo = (id) => {
-    const newList = list.filter((todo) => todo.id !== id);
-
-    setList(newList);
+    setItems(newList);
+    setUpdatedText("");
+    setShowEdit(-1);
   }
 
   return (
-    <div>
-      <h1>Todo List</h1>
-      <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
-      <button onClick={() => addTodo(input)}>Add</button>
+    <div className="app">
+      <h1>'- "Todo-list" project using React (use Javascript)</h1>
+
+      <input
+        type="text"
+        placeholder="Add an item..."
+        value={newItem}
+        onChange={(e) => setNewItem(e.target.value)}
+      />
+
+      <button className="button" onClick={() => addItem()}>&#43;</button>
+
       <ul>
-        {list.map((todo) => (
-          <li key = {todo.id}>
-            <input type="text" defaultValue={todo.todo} onChange={(e) => setEditInput(e.target.value)}/>
-            <button onClick={() => changeTodo(todo.id, editInput)}>Change</button>
-            <button onClick={() => deleteTodo(todo.id)}>&times;</button>
-          </li>
-        ))}
+        {items.map((item) => {
+          return (
+            <div>
+              <li key={item.id} >
+                {item.value}
+
+                <button className="button" onClick={() => {
+                  setShowEdit(item.id);
+                  setUpdatedText(item.value)
+                }}>
+                  📝
+                </button>
+
+                <button
+                  className="button"
+                  onClick={() => deleteItem(item.id)}
+                >
+                  ❌
+                </button>
+
+                <button className="button">
+                🔍
+                </button>
+              </li>
+
+              {showEdit === item.id ? (
+                <div>
+                  <input
+                    type="text"
+                    value={updatedText}
+                    onChange={(e) => setUpdatedText(e.target.value)}
+                  />
+                  <button onClick={() => editItem(item.id, updatedText)}>
+                  ✔️
+                  </button>
+                </div>
+              ) : null}
+
+              <hr></hr>
+            </div>
+          );
+        })}
       </ul>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
