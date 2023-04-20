@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
+import { Button, TextField } from '@material-ui/core';
+import AddIcon from '@mui/icons-material/Add';
 
 function App() {
   // Hook - `useState`
@@ -48,14 +50,22 @@ function App() {
     <div className="app">
       <h1>'- "Todo-list" project using React (use Javascript)</h1>
 
-      <input
-        type="text"
-        placeholder="Add an item..."
-        value={newItem}
+      <TextField value={newItem}
+        id="outlined-basic"
+        label="Title"
+        variant="outlined"
+        size="small"
         onChange={(e) => setNewItem(e.target.value)}
       />
-
-      <button className="button" onClick={() => addItem()}>&#43;</button>
+      
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        startIcon={<AddIcon />}
+        disableElevation onClick={() => addItem()}>
+        Add
+      </Button>
 
       <ul>
         {items.map((item) => {
@@ -79,7 +89,7 @@ function App() {
                 </button>
 
                 <button className="button">
-                🔍
+                  🔍
                 </button>
               </li>
 
@@ -91,7 +101,7 @@ function App() {
                     onChange={(e) => setUpdatedText(e.target.value)}
                   />
                   <button onClick={() => editItem(item.id, updatedText)}>
-                  ✔️
+                    ✔️
                   </button>
                 </div>
               ) : null}
