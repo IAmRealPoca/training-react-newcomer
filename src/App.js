@@ -1,30 +1,55 @@
 import React, { useState } from "react";
 import "./App.css";
-import { Button, TextField } from '@material-ui/core';
+import { Button, Container } from '@material-ui/core';
 import AddIcon from '@mui/icons-material/Add';
+import MyTextField from "./Components/MyTextField";
+import MyToDoItem from "./Components/MyToDoItem";
 
 function App() {
   // Hook - `useState`
-  const [newItem, setNewItem] = useState("");
+
+  const [value, setValue] = useState("");
   const [items, setItems] = useState([]);
 
   const [showEdit, setShowEdit] = useState(-1);
   const [updatedText, setUpdatedText] = useState("");
 
+  const handleValueChange = (e) => {
+    setValue(e.target.value);
+  }
+
+  const handleEditValueChange = (e) => {
+    setUpdatedText(e.target.value);
+  }
+
+  const handleOnClickEditModeButton = (id, value) => {
+    setShowEdit(id);
+    setUpdatedText(value);
+  }
+
+  const handleOnClickDeleteButton = (id) => {
+    deleteItem(id);
+  }
+
+  const handleOnClickDetailsButton = () => {
+    // do later
+  }
+
+  const handleOnClickEditButton = (id) => {
+    editItem(id, updatedText);
+  }
+
   function addItem() {
-    if (!newItem) {
-      alert("Press enter an item.");
-      return;
-    }
+    if (!value) return;
 
     const item = {
       id: Math.floor(Math.random() * 1000),
-      value: newItem,
+      value: value,
     };
 
     setItems((oldList) => [...oldList, item]);
 
-    setNewItem("");
+    setValue("");
   }
 
   function deleteItem(id) {
@@ -50,14 +75,15 @@ function App() {
     <div className="app">
       <h1>'- "Todo-list" project using React (use Javascript)</h1>
 
-      <TextField value={newItem}
+      {/* <TextField value={newItem}
         id="outlined-basic"
         label="Title"
         variant="outlined"
         size="small"
         onChange={(e) => setNewItem(e.target.value)}
-      />
-      
+      /> */}
+      <MyTextField value={value} handleChange={handleValueChange} />
+
       <Button
         variant="contained"
         color="primary"
@@ -66,51 +92,26 @@ function App() {
         disableElevation onClick={() => addItem()}>
         Add
       </Button>
+      <Container maxWidth="xs">
+        <ul>
+          {items.map((item) => {
+            return (
+              <MyToDoItem
+                id={item.id}
+                value={item.value}
+                showEditMode={showEdit}
+                handleOnClickEditModeButton={() => handleOnClickEditModeButton(item.id, item.value)}
+                handleOnClickDeleteButton={() => handleOnClickDeleteButton(item.id)}
+                handleOnClickDetailsButton={() => handleOnClickDetailsButton}
+                updatedText={updatedText}
+                handleEditValueChange={() => handleEditValueChange}
+                handleOnClickEditButton={() => handleOnClickEditButton(item.id)}
+              />
+            );
+          })}
+        </ul>
+      </Container>
 
-      <ul>
-        {items.map((item) => {
-          return (
-            <div>
-              <li key={item.id} >
-                {item.value}
-
-                <button className="button" onClick={() => {
-                  setShowEdit(item.id);
-                  setUpdatedText(item.value)
-                }}>
-                  📝
-                </button>
-
-                <button
-                  className="button"
-                  onClick={() => deleteItem(item.id)}
-                >
-                  ❌
-                </button>
-
-                <button className="button">
-                  🔍
-                </button>
-              </li>
-
-              {showEdit === item.id ? (
-                <div>
-                  <input
-                    type="text"
-                    value={updatedText}
-                    onChange={(e) => setUpdatedText(e.target.value)}
-                  />
-                  <button onClick={() => editItem(item.id, updatedText)}>
-                    ✔️
-                  </button>
-                </div>
-              ) : null}
-
-              <hr></hr>
-            </div>
-          );
-        })}
-      </ul>
     </div>
   );
 }
