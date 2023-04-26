@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./App.css";
 import { Button, Container } from '@material-ui/core';
 import AddIcon from '@mui/icons-material/Add';
 import MyTextField from "./Components/MyTextField";
 import MyToDoItem from "./Components/MyToDoItem";
+import useStore from "./zustand/store";
 
 function App() {
   // Hook - `useState`
@@ -71,8 +72,35 @@ function App() {
     setShowEdit(-1);
   }
 
+
+  const countStore = useStore(state => state.count);
+  const increment = useStore(state => state.increment);
+  const decrement = useStore(state => state.decrement);
+
+  const [inputCount, setInputCount] = useState(1);
+  const handleChangeCount = useCallback((e) => {
+    setInputCount(parseInt(e.target.value));
+  }, []);
+
+  const handleIncreaseCount = () => {
+    increment(inputCount);
+  };
+
+  const handleDecreaseCount = () => {
+    decrement(inputCount);
+  };
+
   return (
     <div className="app">
+
+      <h1>Counter</h1>
+      <p>Count: {countStore}</p>
+      <input type="number" value={inputCount} onChange={handleChangeCount}></input>
+      <button onClick={handleIncreaseCount}>Increase</button>
+      <button onClick={handleDecreaseCount}>Increase</button>
+
+      <br/>
+
       <h1>'- "Todo-list" project using React (use Javascript)</h1>
 
       {/* <TextField value={newItem}
